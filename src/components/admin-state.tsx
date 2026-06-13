@@ -12,7 +12,7 @@ export function EmptyState({
   actionLabel?: string;
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-6 py-10 text-center">
+    <div className="rounded-[1.5rem] border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-6 py-10 text-center animate-slide-up">
       <h3 className="text-xl font-semibold tracking-tight text-[color:var(--color-primary-dark)]">{title}</h3>
       <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[color:var(--color-text-muted)]">
         {description}
@@ -20,7 +20,7 @@ export function EmptyState({
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}
-          className="mt-6 inline-flex rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-hover)]"
+          className="mt-6 inline-flex rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition-smooth hover:bg-[color:var(--color-hover)] hover-lift"
         >
           {actionLabel}
         </Link>
@@ -31,7 +31,7 @@ export function EmptyState({
 
 export function LoadingState({ label = "Loading" }: { label?: string }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <div className="h-8 w-56 animate-pulse rounded-full bg-[color:var(--color-bg-light)]" />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
