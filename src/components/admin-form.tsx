@@ -12,7 +12,7 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-[1.75rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.05)] sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+    <div className="flex flex-col gap-4 rounded-[1.75rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.05)] sm:p-8 lg:flex-row lg:items-end lg:justify-between hover-lift animate-slide-up">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[color:var(--color-text-muted)]">
           {eyebrow}
@@ -39,7 +39,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[1.5rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.04)]">
+    <section className="rounded-[1.5rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.04)] hover-lift animate-slide-up">
       <div className="mb-5">
         <h2 className="text-xl font-semibold tracking-tight text-[color:var(--color-primary-dark)]">{title}</h2>
         {description ? (
@@ -72,7 +72,7 @@ export function Field({
 }
 
 const inputClass =
-  "w-full rounded-2xl border border-[color:var(--color-border)] bg-white px-4 py-3 text-sm text-[color:var(--color-text)] shadow-sm outline-none transition placeholder:text-[color:var(--color-text-muted)] focus:border-[color:var(--color-primary)] focus:ring-2 focus:ring-[color:var(--color-focus-ring)]/25";
+  "w-full rounded-2xl border border-[color:var(--color-border)] bg-white px-4 py-3 text-sm text-[color:var(--color-text)] shadow-sm outline-none transition-smooth placeholder:text-[color:var(--color-text-muted)] focus:border-[color:var(--color-primary)] focus:ring-2 focus:ring-[color:var(--color-focus-ring)]/25 focus:shadow-md";
 
 export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputClass} ${props.className ?? ""}`.trim()} />;
@@ -91,8 +91,8 @@ export function Checkbox({
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
   return (
-    <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-4 py-3">
-      <input type="checkbox" {...props} className="h-4 w-4 rounded border-[color:var(--color-border)] text-[color:var(--color-primary)]" />
+    <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-4 py-3 transition-smooth hover:bg-white cursor-pointer hover-lift">
+      <input type="checkbox" {...props} className="h-4 w-4 rounded border-[color:var(--color-border)] text-[color:var(--color-primary)] transition-smooth" />
       <span className="text-sm font-medium text-[color:var(--color-primary-dark)]">{label}</span>
     </label>
   );
@@ -102,10 +102,12 @@ export function ActionButton({
   children,
   tone = "primary",
   type = "submit",
+  disabled = false,
 }: {
   children: ReactNode;
   tone?: "primary" | "secondary" | "danger";
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }) {
   const styles =
     tone === "danger"
@@ -116,8 +118,33 @@ export function ActionButton({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition ${styles}`}
+      disabled={disabled}
+      className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition ${styles} ${
+        disabled ? "opacity-60 cursor-not-allowed" : ""
+      }`}
     >
+      {children}
+    </button>
+  );
+}
+
+export function CreateButton({
+  onClick,
+  children,
+  className = "",
+}: {
+  onClick: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition-smooth hover-lift ${className}`}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="mr-2">
+        <path d="M12 5v14M5 12h14" strokeWidth="2" strokeLinecap="round" />
+      </svg>
       {children}
     </button>
   );

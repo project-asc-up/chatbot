@@ -17,10 +17,10 @@ export function AdminNavLink({
     <Link
       href={href}
       aria-current={isActive ? "page" : undefined}
-      className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus-ring)] ${
+      className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-smooth focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus-ring)] ${
         isActive
-          ? "bg-white/12 text-white shadow-inner"
-          : "text-white/80 hover:bg-white/10 hover:text-white"
+          ? "bg-white text-[color:var(--color-primary-dark)] shadow-sm"
+          : "text-[color:var(--color-text-muted)] hover:bg-white/50 hover:text-[color:var(--color-primary-dark)]"
       }`}
     >
       {children}
