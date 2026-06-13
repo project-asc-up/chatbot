@@ -1,22 +1,24 @@
 import Image from "next/image";
+import { BarChart3, BookOpen, HelpCircle, Link as LinkIcon, Settings, Users, Zap, BookMarked, Upload, Home } from "lucide-react";
 import { AdminNavLink } from "@/components/admin-nav-link";
+import { SearchBar } from "@/components/search-bar";
 
 type NavItem = {
   label: string;
   href: string;
-  icon?: string;
+  icon?: React.ReactNode;
 };
 
 const navItems: NavItem[] = [
-  { label: "Overview", href: "/admin", icon: "📊" },
-  { label: "Faculties", href: "/admin/faculties", icon: "🏫" },
-  { label: "ASC Coaches", href: "/admin/coaches", icon: "👥" },
-  { label: "Programmes", href: "/admin/programmes", icon: "📚" },
-  { label: "Course Modules", href: "/admin/course-modules", icon: "📖" },
-  { label: "Resources", href: "/admin/resources", icon: "🔗" },
-  { label: "FAQs", href: "/admin/faqs", icon: "❓" },
-  { label: "Analytics", href: "/admin/health", icon: "📈" },
-  { label: "Imports", href: "/admin/imports", icon: "📤" },
+  { label: "Overview", href: "/admin", icon: <Home size={20} /> },
+  { label: "Faculties", href: "/admin/faculties", icon: <Settings size={20} /> },
+  { label: "ASC Coaches", href: "/admin/coaches", icon: <Users size={20} /> },
+  { label: "Programmes", href: "/admin/programmes", icon: <BookMarked size={20} /> },
+  { label: "Course Modules", href: "/admin/course-modules", icon: <BookOpen size={20} /> },
+  { label: "Resources", href: "/admin/resources", icon: <LinkIcon size={20} /> },
+  { label: "FAQs", href: "/admin/faqs", icon: <HelpCircle size={20} /> },
+  { label: "Analytics", href: "/admin/health", icon: <BarChart3 size={20} /> },
+  { label: "Imports", href: "/admin/imports", icon: <Upload size={20} /> },
 ];
 
 export function AdminShell({
@@ -37,16 +39,14 @@ export function AdminShell({
         <aside className="hidden w-72 shrink-0 border-r border-[color:var(--color-border)] bg-white lg:flex lg:flex-col">
           <div className="border-b border-[color:var(--color-border)] px-6 py-6 bg-white">
             <div className="flex items-center gap-3">
-              <div className="h-14 w-14 flex-shrink-0 rounded-lg bg-white border border-[color:var(--color-border)] flex items-center justify-center overflow-hidden">
-                <Image
-                  src="/up-logo.png"
-                  alt="University of Pretoria logo"
-                  width={180}
-                  height={180}
-                  className="h-10 w-auto object-contain"
-                  priority
-                />
-              </div>
+              <Image
+                src="/up-logo.png"
+                alt="University of Pretoria logo"
+                width={180}
+                height={180}
+                className="h-14 w-auto object-contain flex-shrink-0"
+                priority
+              />
               <div className="min-w-0">
                 <h1 className="text-lg font-semibold tracking-tight text-[color:var(--color-primary)]">
                   Project ASC
@@ -80,15 +80,7 @@ export function AdminShell({
                   Admin Management System
                 </h2>
               </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  className="hidden rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium text-[color:var(--color-primary)] transition-smooth hover:border-[color:var(--color-primary)] hover:bg-[color:var(--color-bg-light)] focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus-ring)] sm:inline-flex"
-                >
-                  Search
-                </button>
-              </div>
+              <SearchBar />
             </div>
           </header>
 
