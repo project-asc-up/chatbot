@@ -27,7 +27,6 @@ export default async function CourseModulesPage({
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 3"
         title="Course Modules"
         description="Manage curriculum modules at scale with programme links, year ordering, and source tracking."
       />

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
-import { createFaq } from "@/lib/admin-actions";
+import { PageHeader, Section } from "@/components/admin-form";
+import { CreateFaqModal } from "@/components/create-faq-modal";
 import { getFaqRows, getFacultyOptions } from "@/lib/admin-queries";
 
 const categoryOptions = [
@@ -18,62 +18,10 @@ export default async function FaqsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 3"
         title="FAQs"
         description="Manage concise support answers that the bot and admin team can surface quickly."
+        action={<CreateFaqModal faculties={faculties} categoryOptions={categoryOptions} />}
       />
-
-      <Section title="Create FAQ" description="Add a question, answer, and priority so it can be surfaced in order.">
-        <form action={createFaq} className="grid gap-5 md:grid-cols-2">
-          <Field label="Faculty">
-            <Select name="facultyId" defaultValue="">
-              <option value="">General</option>
-              {faculties.map((faculty) => (
-                <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Category">
-            <Select name="category" required defaultValue="">
-              <option value="" disabled>
-                Select category
-              </option>
-              {categoryOptions.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Question">
-            <TextInput name="question" required />
-          </Field>
-          <Field label="Priority">
-            <TextInput name="priority" type="number" min="0" />
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Answer">
-              <TextArea name="answer" required />
-            </Field>
-          </div>
-          <Field label="Source URL">
-            <TextInput name="sourceUrl" type="url" />
-          </Field>
-          <Field label="Last verified">
-            <TextInput name="lastVerified" type="date" />
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Notes">
-              <TextArea name="notes" />
-            </Field>
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <ActionButton>Create FAQ</ActionButton>
-          </div>
-        </form>
-      </Section>
 
       <Section title="FAQ directory" description="Answer records with category and priority ordering.">
         <div className="space-y-4">

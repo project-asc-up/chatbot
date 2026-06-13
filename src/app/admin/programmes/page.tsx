@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
-import { createProgramme } from "@/lib/admin-actions";
+import { PageHeader, Section } from "@/components/admin-form";
+import { CreateProgrammeModal } from "@/components/create-programme-modal";
 import { getFacultyOptions, getProgrammeRows } from "@/lib/admin-queries";
 
 export default async function ProgrammesPage() {
@@ -10,68 +10,10 @@ export default async function ProgrammesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 2"
         title="Programmes"
         description="Maintain programme master data, qualification details, and curriculum provenance."
+        action={<CreateProgrammeModal faculties={faculties} />}
       />
-
-      <Section title="Create programme" description="Add a new programme and link it to a faculty.">
-        <form action={createProgramme} className="grid gap-5 md:grid-cols-2">
-          <Field label="Faculty">
-            <Select name="facultyId" required defaultValue="">
-              <option value="" disabled>
-                Select faculty
-              </option>
-              {faculties.map((faculty) => (
-                <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Source faculty code">
-            <TextInput name="sourceFacultyCode" />
-          </Field>
-          <Field label="Programme code">
-            <TextInput name="programmeCode" required />
-          </Field>
-          <Field label="Programme name">
-            <TextInput name="programmeName" required />
-          </Field>
-          <Field label="Degree name">
-            <TextInput name="degreeName" />
-          </Field>
-          <Field label="Academic level">
-            <TextInput name="academicLevel" />
-          </Field>
-          <Field label="Qualification type">
-            <TextInput name="qualificationType" />
-          </Field>
-          <Field label="Programme credits">
-            <TextInput name="programmeCredits" type="number" min="0" />
-          </Field>
-          <Field label="Duration years">
-            <TextInput name="durationYears" type="number" min="0" />
-          </Field>
-          <Field label="Year levels">
-            <TextInput name="yearLevels" placeholder="01;02;03;FIN" />
-          </Field>
-          <Field label="Source file">
-            <TextInput name="sourceFile" />
-          </Field>
-          <Field label="Last verified">
-            <TextInput name="lastVerified" type="date" />
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Notes">
-              <TextArea name="notes" />
-            </Field>
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <ActionButton>Create programme</ActionButton>
-          </div>
-        </form>
-      </Section>
 
       <Section title="Programme directory" description="Current programme records with linked module counts.">
         <div className="overflow-x-auto">

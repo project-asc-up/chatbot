@@ -14,7 +14,6 @@ export default async function CoachesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 2"
         title="ASC Coaches"
         description="Maintain the faculty-linked coach directory with role, contact, level, and activation status."
         action={<CreateCoachModal faculties={faculties} />}

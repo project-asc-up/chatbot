@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
-import { createResource } from "@/lib/admin-actions";
+import { PageHeader, Section } from "@/components/admin-form";
+import { CreateResourceModal } from "@/components/create-resource-modal";
 import { getFacultyOptions, getResourceRows } from "@/lib/admin-queries";
 
 export default async function ResourcesPage() {
@@ -10,51 +10,10 @@ export default async function ResourcesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 3"
         title="Resources"
         description="Manage general and faculty-specific support resources used by the bot and admin team."
+        action={<CreateResourceModal faculties={faculties} />}
       />
-
-      <Section title="Create resource" description="Add a support resource and assign it to a faculty if needed.">
-        <form action={createResource} className="grid gap-5 md:grid-cols-2">
-          <Field label="Faculty">
-            <Select name="facultyId" defaultValue="">
-              <option value="">General</option>
-              {faculties.map((faculty) => (
-                <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Category">
-            <TextInput name="category" required placeholder="Study Skills" />
-          </Field>
-          <Field label="Title">
-            <TextInput name="title" required />
-          </Field>
-          <Field label="URL">
-            <TextInput name="url" type="url" required />
-          </Field>
-          <Field label="Description">
-            <TextArea name="description" />
-          </Field>
-          <Field label="Source URL">
-            <TextInput name="sourceUrl" type="url" />
-          </Field>
-          <Field label="Last verified">
-            <TextInput name="lastVerified" type="date" />
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Notes">
-              <TextArea name="notes" />
-            </Field>
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <ActionButton>Create resource</ActionButton>
-          </div>
-        </form>
-      </Section>
 
       <Section title="Resource directory" description="Current support resources with faculty scope.">
         <div className="overflow-x-auto">

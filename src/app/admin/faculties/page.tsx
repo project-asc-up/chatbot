@@ -14,7 +14,6 @@ export default async function FacultiesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Phase 2"
         title="Faculties"
         description="Manage the master faculty records that drive coach, programme, resource, and FAQ relationships."
         action={<CreateFacultyModal />}
