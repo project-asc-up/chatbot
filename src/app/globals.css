@@ -125,15 +125,6 @@ textarea {
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -186,8 +177,6 @@ textarea {
 }
 
 .card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(0, 59, 122, 0.15);
   border-left-color: var(--color-accent-ochre);
 }
 
@@ -264,38 +253,6 @@ textarea {
   transform: scale(1.05);
 }
 
-/* Visual hierarchy with color blocks */
-.primary-block {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  color: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 59, 122, 0.1);
-}
-
-.accent-block {
-  background: linear-gradient(135deg, var(--color-accent-ochre) 0%, #a86a1f 100%);
-  color: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(199, 123, 46, 0.2);
-}
-
-/* Divider with color accent */
-.divider-ochre {
-  position: relative;
-  margin: 24px 0;
-}
-
-.divider-ochre::before {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background-color: var(--color-accent-ochre);
-  margin-bottom: 16px;
-}
-
 /* Smooth transitions */
 .transition-smooth {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -303,16 +260,6 @@ textarea {
 
 .transition-smooth-lg {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Hover lift effect */
-.hover-lift {
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 59, 122, 0.12);
 }
 
 /* Respect prefers-reduced-motion */
