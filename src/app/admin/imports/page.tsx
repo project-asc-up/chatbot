@@ -24,33 +24,45 @@ export default function ImportsPage() {
         description="Reference the supported seed files and the editorial workflow used to keep the admin data current."
       />
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <Section title="Supported seed files" description="Current source files used by the seed pipeline.">
-          <ul className="space-y-3 text-sm leading-6 text-[color:var(--color-text-muted)]">
-            {importFiles.map((file) => (
-              <li
-                key={file}
-                className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-4 py-3 font-medium text-[color:var(--color-primary-dark)]"
-              >
-                {file}
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section title="Operational workflow" description="How syncs and maintenance should happen in practice.">
-          <ol className="space-y-4 text-sm leading-6 text-[color:var(--color-text-muted)]">
-            {importSteps.map((step, index) => (
-              <li key={step} className="flex gap-4">
-                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-primary)] text-xs font-bold text-white">
-                  {index + 1}
+      <Section title="Import overview" description="These notes keep the seed workflow visible and repeatable.">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {importFiles.map((file, index) => (
+            <article
+              key={file}
+              className="rounded-[1.5rem] border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-5"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-text-muted)]">
+                  Source {index + 1}
                 </span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
-        </Section>
-      </div>
+                <span className="rounded-full border border-[color:var(--color-border)] px-3 py-1 text-xs font-medium text-[color:var(--color-primary-dark)]">
+                  Seed input
+                </span>
+              </div>
+              <p className="mt-4 break-all text-sm font-semibold text-[color:var(--color-primary-dark)]">{file}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Operational workflow" description="How syncs and maintenance should happen in practice.">
+        <div className="grid gap-4 xl:grid-cols-2">
+          {importSteps.map((step, index) => (
+            <article
+              key={step}
+              className="flex gap-4 rounded-[1.5rem] border border-[color:var(--color-border)] bg-white p-5 shadow-[0_12px_40px_rgba(0,32,80,0.04)]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[color:var(--color-primary)] text-sm font-bold text-white">
+                {index + 1}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[color:var(--color-primary-dark)]">Step {index + 1}</p>
+                <p className="mt-1 text-sm leading-6 text-[color:var(--color-text-muted)]">{step}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }

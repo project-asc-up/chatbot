@@ -1,6 +1,6 @@
 import { PageHeader, Section } from "@/components/admin-form";
 import { CreateProgrammeModal } from "@/components/create-programme-modal";
-import { ProgrammeTable } from "@/components/programme-table";
+import { ProgrammeExplorer } from "@/components/programme-explorer";
 import { getFacultyOptions, getProgrammeRows } from "@/lib/admin-queries";
 
 export default async function ProgrammesPage() {
@@ -15,7 +15,7 @@ export default async function ProgrammesPage() {
       />
 
       <Section title="Programme directory" description="Current programme records with linked module counts.">
-        <ProgrammeTable programmes={programmes} faculties={faculties} />
+        <ProgrammeExplorer programmes={programmes} />
       </Section>
     </div>
   );

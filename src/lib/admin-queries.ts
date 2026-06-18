@@ -1,8 +1,7 @@
 import { getPrismaClient } from "@/lib/prisma";
 
-const prisma = getPrismaClient();
-
 export async function getFacultyOptions() {
+  const prisma = getPrismaClient();
   return prisma.faculty.findMany({
     orderBy: { name: "asc" },
     select: { id: true, name: true, code: true },
@@ -10,6 +9,7 @@ export async function getFacultyOptions() {
 }
 
 export async function getFacultyRows() {
+  const prisma = getPrismaClient();
   return prisma.faculty.findMany({
     orderBy: { name: "asc" },
     select: {
@@ -34,6 +34,7 @@ export async function getFacultyRows() {
 }
 
 export async function getFacultyById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.faculty.findUnique({
     where: { id },
     include: {
@@ -69,6 +70,7 @@ export async function getFacultyById(id: string) {
 }
 
 export async function getCoachRows() {
+  const prisma = getPrismaClient();
   return prisma.ascCoach.findMany({
     orderBy: [{ faculty: { name: "asc" } }, { name: "asc" }],
     select: {
@@ -90,6 +92,7 @@ export async function getCoachRows() {
 }
 
 export async function getCoachById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.ascCoach.findUnique({
     where: { id },
     include: {
@@ -99,6 +102,7 @@ export async function getCoachById(id: string) {
 }
 
 export async function getProgrammeRows() {
+  const prisma = getPrismaClient();
   return prisma.programme.findMany({
     orderBy: [{ faculty: { name: "asc" } }, { programmeName: "asc" }],
     select: {
@@ -124,6 +128,7 @@ export async function getProgrammeRows() {
 }
 
 export async function getProgrammeById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.programme.findUnique({
     where: { id },
     include: {
@@ -152,6 +157,7 @@ export async function getCourseModulePage({
   page: number;
   pageSize: number;
 }) {
+  const prisma = getPrismaClient();
   const trimmedQuery = query?.trim();
 
   const where = trimmedQuery
@@ -204,6 +210,7 @@ export async function getCourseModulePage({
 }
 
 export async function getCourseModuleById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.courseModule.findUnique({
     where: { id },
     include: {
@@ -217,6 +224,7 @@ export async function getCourseModuleById(id: string) {
 }
 
 export async function getResourceRows() {
+  const prisma = getPrismaClient();
   return prisma.resource.findMany({
     orderBy: [{ category: "asc" }, { title: "asc" }],
     select: {
@@ -234,6 +242,7 @@ export async function getResourceRows() {
 }
 
 export async function getResourceById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.resource.findUnique({
     where: { id },
     include: {
@@ -243,6 +252,7 @@ export async function getResourceById(id: string) {
 }
 
 export async function getFaqRows() {
+  const prisma = getPrismaClient();
   return prisma.faq.findMany({
     orderBy: [{ priority: "asc" }, { category: "asc" }, { question: "asc" }],
     select: {
@@ -260,6 +270,7 @@ export async function getFaqRows() {
 }
 
 export async function getFaqById(id: string) {
+  const prisma = getPrismaClient();
   return prisma.faq.findUnique({
     where: { id },
     include: {

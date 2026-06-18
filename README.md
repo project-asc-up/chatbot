@@ -12,7 +12,9 @@ Deployable Next.js app root for the Project ASC MVP.
   - `courses_modules`
   - `resources`
   - `faqs`
-- Neon runtime adapter for Prisma
+- Runtime adapter selection for Prisma
+  - Neon adapter for Neon hosts
+  - `pg` adapter for local/self-hosted PostgreSQL
 - CSV seed importer wired to the repo-level knowledge base in `../docs`
 - `GET /api/health` database verification endpoint
 
@@ -23,9 +25,10 @@ Use the repository root as the Vercel project root.
 Required environment variables:
 
 - `DATABASE_URL`
-  - Pooled Neon connection string used by the running app.
+  - Pooled Neon connection string used by the running app, or a local/self-hosted PostgreSQL URL.
 - `DIRECT_URL`
-  - Direct non-pooled Neon connection string used by Prisma CLI commands.
+  - Direct non-pooled Neon connection string used by Prisma CLI commands when using Neon.
+  - For local/self-hosted PostgreSQL, you can point this at the same local database URL.
 
 ## Local commands
 
@@ -35,7 +38,7 @@ npm run db:generate
 npm run dev
 ```
 
-Once a real Neon database is connected:
+Once a database is connected:
 
 ```bash
 npm run db:push

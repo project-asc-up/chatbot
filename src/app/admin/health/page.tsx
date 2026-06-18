@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { ActionButton, PageHeader, Section } from "@/components/admin-form";
-import { refreshHealthDashboard } from "@/lib/admin-actions";
+import { PageHeader, Section } from "@/components/admin-form";
 import { getHealthOverview } from "@/lib/admin-queries";
 
 function StatusPill({ label, tone }: { label: string; tone: "good" | "warn" | "bad" }) {
@@ -93,8 +92,8 @@ export default async function HealthPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Analytics"
-        description="Monitor database consistency and data quality across all content types."
+        title="Health & Quality"
+        description="Monitor database consistency, verification freshness, and data quality across all content types."
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">

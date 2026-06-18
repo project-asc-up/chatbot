@@ -1,6 +1,6 @@
 import { PageHeader, Section } from "@/components/admin-form";
 import { CreateResourceModal } from "@/components/create-resource-modal";
-import { ResourceTable } from "@/components/resource-table";
+import { ResourceExplorer } from "@/components/resource-explorer";
 import { getFacultyOptions, getResourceRows } from "@/lib/admin-queries";
 
 export default async function ResourcesPage() {
@@ -10,12 +10,12 @@ export default async function ResourcesPage() {
     <div className="space-y-8">
       <PageHeader
         title="Resources"
-        description="Manage general and faculty-specific support resources used by the bot and admin team."
+        description="Browse support links as grouped cards instead of a dense table."
         action={<CreateResourceModal faculties={faculties} />}
       />
 
-      <Section title="Resource directory" description="Current support resources with faculty scope.">
-        <ResourceTable resources={resources} faculties={faculties} />
+      <Section title="Resource atlas" description="Scrollable cards grouped by faculty, with external links and verification status.">
+        <ResourceExplorer resources={resources} />
       </Section>
     </div>
   );

@@ -1,6 +1,6 @@
 import { PageHeader, Section } from "@/components/admin-form";
 import { CreateFacultyModal } from "@/components/create-faculty-modal";
-import { FacultyTable } from "@/components/faculty-table";
+import { FacultyGallery } from "@/components/faculty-gallery";
 import { getFacultyRows } from "@/lib/admin-queries";
 
 export default async function FacultiesPage() {
@@ -14,8 +14,11 @@ export default async function FacultiesPage() {
         action={<CreateFacultyModal />}
       />
 
-      <Section title="Faculty directory" description="Current faculty records with linked content counts.">
-        <FacultyTable faculties={faculties} />
+      <Section
+        title="Faculty directory"
+        description="Current faculty records with linked content counts."
+      >
+        <FacultyGallery faculties={faculties} />
       </Section>
     </div>
   );

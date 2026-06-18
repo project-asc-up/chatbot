@@ -1,6 +1,6 @@
 import { PageHeader, Section } from "@/components/admin-form";
 import { CreateFaqModal } from "@/components/create-faq-modal";
-import { FaqTable } from "@/components/faq-table";
+import { FaqExplorer } from "@/components/faq-explorer";
 import { getFaqRows, getFacultyOptions } from "@/lib/admin-queries";
 
 const categoryOptions = [
@@ -18,12 +18,12 @@ export default async function FaqsPage() {
     <div className="space-y-8">
       <PageHeader
         title="FAQs"
-        description="Manage concise support answers that the bot and admin team can surface quickly."
+        description="Curate support answers as expandable knowledge cards instead of a plain table."
         action={<CreateFaqModal faculties={faculties} categoryOptions={categoryOptions} />}
       />
 
-      <Section title="FAQ directory" description="Answer records with category and priority ordering.">
-        <FaqTable faqs={faqs} faculties={faculties} />
+      <Section title="FAQ atlas" description="Grouped by faculty with answer previews and verification details.">
+        <FaqExplorer faqs={faqs} />
       </Section>
     </div>
   );

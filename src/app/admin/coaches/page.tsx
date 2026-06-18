@@ -1,6 +1,6 @@
 import { PageHeader, Section } from "@/components/admin-form";
 import { CreateCoachModal } from "@/components/create-coach-modal";
-import { CoachTable } from "@/components/coach-table";
+import { CoachDirectory } from "@/components/coach-directory";
 import { getFacultyOptions, getCoachRows } from "@/lib/admin-queries";
 
 export default async function CoachesPage() {
@@ -15,7 +15,7 @@ export default async function CoachesPage() {
       />
 
       <Section title="Coach directory" description="Current coach records across all faculties.">
-        <CoachTable coaches={coaches} faculties={faculties} />
+        <CoachDirectory coaches={coaches} />
       </Section>
     </div>
   );

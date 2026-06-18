@@ -1,12 +1,9 @@
 import Link from "next/link";
 
-import { ActionButton, Field, PageHeader, Section, TextInput } from "@/components/admin-form";
+import { PageHeader, Section, Field, TextInput, ActionButton } from "@/components/admin-form";
 import { CreateCourseModuleModal } from "@/components/create-course-module-modal";
+import { CourseModuleAtlas } from "@/components/course-module-atlas";
 import { getCourseModulePage, getProgrammeRows } from "@/lib/admin-queries";
-
-function safeString(value: string | null | undefined) {
-  return value && value.trim().length > 0 ? value : "Not set";
-}
 
 export default async function CourseModulesPage({
   searchParams,
@@ -16,7 +13,6 @@ export default async function CourseModulesPage({
   const { q, page } = await searchParams;
   const pageSize = 50;
   const currentPage = Math.max(Number(page ?? "1") || 1, 1);
-
   const [pageData, programmes] = await Promise.all([
     getCourseModulePage({ query: q, page: currentPage, pageSize }),
     getProgrammeRows(),
@@ -28,11 +24,11 @@ export default async function CourseModulesPage({
     <div className="space-y-8">
       <PageHeader
         title="Course Modules"
-        description="Manage curriculum modules at scale with programme links, year ordering, and source tracking."
+        description="Browse curriculum rows as grouped module cards, keeping the programme context visible."
         action={<CreateCourseModuleModal programmes={programmes} />}
       />
 
-      <Section title="Search modules" description="Filter the large curriculum dataset before editing.">
+      <Section title="Search modules" description="Filter by module code, name, or programme context.">
         <form className="grid gap-4 lg:grid-cols-[1fr_auto]">
           <Field label="Search" hint="Module code, module name, programme code, or programme name">
             <TextInput name="q" defaultValue={q ?? ""} placeholder="Search modules" />
@@ -44,61 +40,16 @@ export default async function CourseModulesPage({
       </Section>
 
       <Section
-        title={`Module directory ${pageData.total > 0 ? `(${pageData.total})` : ""}`}
-        description="Paged list of curriculum modules with their linked programme context."
+        title={`Module atlas ${pageData.total > 0 ? `(${pageData.total})` : ""}`}
+        description="Grouped card view for the current slice of curriculum data."
       >
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-separate border-spacing-0">
-            <thead>
-              <tr className="text-left text-xs uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3">Module</th>
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3">Programme</th>
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3">Year</th>
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3">Type</th>
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3">Units</th>
-                <th className="border-b border-[color:var(--color-border)] px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageData.rows.map((module) => (
-                <tr key={module.id} className="align-top">
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4">
-                    <div className="font-semibold text-[color:var(--color-primary-dark)]">{module.moduleCode}</div>
-                    <div className="mt-1 text-xs text-[color:var(--color-text-muted)]">
-                      {safeString(module.moduleName)}
-                    </div>
-                  </td>
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm">
-                    <div className="font-medium text-[color:var(--color-primary-dark)]">
-                      {module.programme.faculty.code}
-                    </div>
-                    <div className="text-[color:var(--color-text-muted)]">
-                      {module.programme.programmeCode} - {module.programme.programmeName}
-                    </div>
-                  </td>
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)]">
-                    <div>{module.yearLevelRaw}</div>
-                    <div>Sort {module.yearLevelSort ?? "n/a"}</div>
-                  </td>
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)]">
-                    {module.moduleType}
-                  </td>
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)]">
-                    {module.moduleUnits}
-                  </td>
-                  <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-right">
-                    <Link
-                      href={`/admin/course-modules/${module.id}`}
-                      className="inline-flex rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold text-[color:var(--color-primary)] transition hover:border-[color:var(--color-primary)]"
-                    >
-                      View / edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <CourseModuleAtlas
+          rows={pageData.rows}
+          total={pageData.total}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          query={q}
+        />
 
         <div className="mt-6 flex items-center justify-between gap-4 text-sm text-[color:var(--color-text-muted)]">
           <div>

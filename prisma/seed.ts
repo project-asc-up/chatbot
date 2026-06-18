@@ -2,11 +2,11 @@ import { readFile } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { PrismaNeon } from "@prisma/adapter-neon";
 import { parse } from "csv-parse/sync";
 
 import { PrismaClient } from "../src/generated/prisma/client";
 import { CoachLevel } from "../src/generated/prisma/enums";
+import { createDatabaseAdapter } from "../src/lib/db-adapter";
 
 type CsvRow = Record<string, string>;
 
@@ -53,9 +53,7 @@ function createPrismaClient() {
     throw new Error("DIRECT_URL or DATABASE_URL must be configured to run the seed script");
   }
 
-  const adapter = new PrismaNeon({
-    connectionString,
-  });
+  const adapter = createDatabaseAdapter(connectionString);
 
   return new PrismaClient({ adapter });
 }
