@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
 import { deleteFaq, updateFaq } from "@/lib/admin-actions";
 import { getFacultyOptions, getFaqById } from "@/lib/admin-queries";
+import { displayFacultyName } from "@/lib/faculty-display";
 
 function formatDate(value: Date | null) {
   return value ? value.toISOString().slice(0, 10) : "";
@@ -36,7 +37,7 @@ export default async function FaqDetailPage({
       <PageHeader
         eyebrow="FAQ detail"
         title={faq.question}
-        description={`${faq.category} | ${faq.faculty ? `${faq.faculty.code} - ${faq.faculty.name}` : "General"}`}
+        description={`${faq.category} | ${faq.faculty ? `${faq.faculty.code} - ${displayFacultyName(faq.faculty.name)}` : "General"}`}
         action={
           <form action={deleteAction}>
             <ActionButton tone="danger">Delete FAQ</ActionButton>
@@ -51,7 +52,7 @@ export default async function FaqDetailPage({
               <option value="">General</option>
               {faculties.map((faculty) => (
                 <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)} ({faculty.code})
                 </option>
               ))}
             </Select>

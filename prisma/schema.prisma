@@ -32,6 +32,7 @@ model Faculty {
   resources       Resource[]
   faqs            Faq[]
 
+  @@index([name])
   @@map("faculties")
 }
 
@@ -60,7 +61,10 @@ model AscCoach {
 
   @@unique([facultyId, email])
   @@index([facultyId])
+  @@index([name])
   @@index([email])
+  @@index([titleRole])
+  @@index([cluster])
   @@map("asc_coaches")
 }
 
@@ -86,6 +90,7 @@ model Programme {
 
   @@index([facultyId])
   @@index([programmeName])
+  @@index([facultyId, programmeName])
   @@map("programmes")
 }
 
@@ -114,6 +119,8 @@ model CourseModule {
   @@index([programmeCode])
   @@index([yearLevelSort])
   @@index([moduleCode])
+  @@index([programmeCode, yearLevelSort, moduleCode])
+  @@index([moduleName])
   @@map("courses_modules")
 }
 
@@ -134,6 +141,7 @@ model Resource {
 
   @@index([facultyId])
   @@index([category])
+  @@index([title])
   @@map("resources")
 }
 
@@ -155,5 +163,6 @@ model Faq {
   @@index([facultyId])
   @@index([category])
   @@index([priority])
+  @@index([question])
   @@map("faqs")
 }

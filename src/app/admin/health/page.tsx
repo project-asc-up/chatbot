@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageHeader, Section } from "@/components/admin-form";
+import { MetricCard, MetricGrid } from "@/components/metric-card";
 import { getHealthOverview } from "@/lib/admin-queries";
 
 function StatusPill({ label, tone }: { label: string; tone: "good" | "warn" | "bad" }) {
@@ -12,28 +13,6 @@ function StatusPill({ label, tone }: { label: string; tone: "good" | "warn" | "b
         : "bg-rose-50 text-rose-700";
 
   return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${toneClass}`}>{label}</span>;
-}
-
-function MetricCard({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-}) {
-  return (
-    <article className="rounded-[1.5rem] border border-[color:var(--color-border)] bg-white p-5 shadow-[0_12px_40px_rgba(0,32,80,0.05)]">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-        {label}
-      </p>
-      <div className="mt-3 text-3xl font-semibold tracking-tight text-[color:var(--color-primary-dark)]">
-        {value}
-      </div>
-      <p className="mt-2 text-sm leading-6 text-[color:var(--color-text-muted)]">{detail}</p>
-    </article>
-  );
 }
 
 export default async function HealthPage() {
@@ -96,37 +75,37 @@ export default async function HealthPage() {
         description="Monitor database consistency, verification freshness, and data quality across all content types."
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <MetricGrid className="items-stretch md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <MetricCard label="Faculties" value={data.totals.faculties} detail="Master faculty records." />
         <MetricCard label="Coaches" value={data.totals.coaches} detail="Faculty-linked ASC contacts." />
         <MetricCard label="Programmes" value={data.totals.programmes} detail="Programme master data." />
         <MetricCard label="Modules" value={data.totals.modules} detail="Curriculum rows by programme." />
         <MetricCard label="Resources" value={data.totals.resources} detail="General and faculty resources." />
         <MetricCard label="FAQs" value={data.totals.faqs} detail="Support questions and answers." />
-      </section>
+      </MetricGrid>
 
       <Section
         title="Freshness and risk signals"
         description="These checks help editors see which records need a verification pass."
       >
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <MetricGrid className="md:grid-cols-2 xl:grid-cols-3">
           {freshnessSignals.map((item) => (
-            <div
+            <MetricCard
               key={item.label}
-              className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-5"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="text-base font-semibold text-[color:var(--color-primary-dark)]">{item.label}</h2>
+              compact
+              label={item.label}
+              value={item.value}
+              detail={item.detail}
+              meta={
                 <StatusPill
                   label={item.value === 0 ? "Clear" : "Needs attention"}
                   tone={item.tone}
                 />
-              </div>
-              <div className="mt-4 text-3xl font-semibold text-[color:var(--color-primary-dark)]">{item.value}</div>
-              <p className="mt-2 text-sm leading-6 text-[color:var(--color-text-muted)]">{item.detail}</p>
-            </div>
+              }
+              className="bg-[color:var(--color-bg-light)]"
+            />
           ))}
-        </div>
+        </MetricGrid>
       </Section>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">

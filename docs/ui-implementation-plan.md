@@ -1,4 +1,4 @@
-# Project ASC UI Implementation Plan
+# Academic Success Coaches UI Implementation Plan
 
 ## Purpose
 

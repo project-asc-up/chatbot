@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
 import { deleteResource, updateResource } from "@/lib/admin-actions";
 import { getFacultyOptions, getResourceById } from "@/lib/admin-queries";
+import { displayFacultyName } from "@/lib/faculty-display";
 
 function formatDate(value: Date | null) {
   return value ? value.toISOString().slice(0, 10) : "";
@@ -28,7 +29,7 @@ export default async function ResourceDetailPage({
       <PageHeader
         eyebrow="Resource detail"
         title={resource.title}
-        description={`${resource.category} | ${resource.faculty ? `${resource.faculty.code} - ${resource.faculty.name}` : "General"}`}
+        description={`${resource.category} | ${resource.faculty ? `${resource.faculty.code} - ${displayFacultyName(resource.faculty.name)}` : "General"}`}
         action={
           <form action={deleteAction}>
             <ActionButton tone="danger">Delete resource</ActionButton>
@@ -43,7 +44,7 @@ export default async function ResourceDetailPage({
               <option value="">General</option>
               {faculties.map((faculty) => (
                 <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)} ({faculty.code})
                 </option>
               ))}
             </Select>

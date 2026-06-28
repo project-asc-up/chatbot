@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Modal } from '@/components/modal';
 import { Field, TextInput, TextArea, Select, ActionButton } from '@/components/admin-form';
 import { createCoach } from '@/lib/admin-actions';
+import { displayFacultyName } from '@/lib/faculty-display';
 
 interface CreateCoachModalProps {
   faculties: Array<{ id: string; name: string; code: string }>;
@@ -49,7 +50,7 @@ export function CreateCoachModal({ faculties }: CreateCoachModalProps) {
                 </option>
                 {faculties.map((faculty) => (
                   <option key={faculty.id} value={faculty.id}>
-                    {faculty.name} ({faculty.code})
+                    {displayFacultyName(faculty.name)}
                   </option>
                 ))}
               </Select>

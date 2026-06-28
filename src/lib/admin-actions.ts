@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { CoachLevel } from "@/generated/prisma/enums";
+import { ADMIN_CACHE_TAGS } from "@/lib/admin-cache-tags";
 import { getPrismaClient } from "@/lib/prisma";
 
 function textValue(formData: FormData, key: string) {
@@ -69,6 +70,14 @@ function redirectTo(entity: string, id?: string) {
   if (id) {
     revalidatePath(`/admin/${entity}/${id}`);
   }
+  revalidateTag(ADMIN_CACHE_TAGS.overview, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.health, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.faculties, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.coaches, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.programmes, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.courseModules, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.resources, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.faqs, "max");
 }
 
 export async function createFaculty(formData: FormData) {
@@ -419,4 +428,6 @@ export async function deleteFaq(id: string) {
 export async function refreshHealthDashboard() {
   revalidatePath("/admin");
   revalidatePath("/admin/health");
+  revalidateTag(ADMIN_CACHE_TAGS.overview, "max");
+  revalidateTag(ADMIN_CACHE_TAGS.health, "max");
 }

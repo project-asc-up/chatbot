@@ -1,44 +1,77 @@
-'use client';
+"use client";
 
 import Link from "next/link";
-import { useState, useMemo } from 'react';
-import { TextInput } from "@/components/admin-form";
+import { useMemo, useState } from "react";
 
-function formatDate(value: Date | null) {
-  return value ? value.toISOString().slice(0, 10) : "Not set";
-}
+import { LiveSearchInput } from "@/components/live-search-input";
+import { formatIsoDate, type DisplayDateValue } from "@/lib/date-display";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
-export function FacultyTable({ faculties }: { faculties: any[] }) {
-  const [searchQuery, setSearchQuery] = useState('');
+type FacultyRow = {
+  id: string;
+  name: string;
+  code: string;
+  codeStatus: string;
+  aliases: string | null;
+  lastVerified: DisplayDateValue;
+  _count: {
+    ascCoaches: number;
+    programmes: number;
+    resources: number;
+    faqs: number;
+  };
+};
+
+export function FacultyTable({ faculties }: { faculties: FacultyRow[] }) {
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFaculties = useMemo(() => {
     if (!searchQuery.trim()) return faculties;
-    
+
     const query = searchQuery.toLowerCase();
-    return faculties.filter(faculty => 
+    return faculties.filter((faculty) =>
       faculty.name.toLowerCase().includes(query) ||
       faculty.code.toLowerCase().includes(query) ||
       faculty.aliases?.toLowerCase().includes(query)
     );
   }, [faculties, searchQuery]);
 
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        faculties.map((faculty) => ({
+          id: faculty.id,
+          title: displayFacultyName(faculty.name),
+          value: faculty.name,
+          detail: `${faculty.code} · ${faculty.codeStatus}`,
+          badge: faculty.code,
+          searchText: [faculty.name, faculty.code, faculty.aliases, faculty.codeStatus].filter(Boolean).join(" "),
+        })),
+        6,
+      ),
+    [faculties, searchQuery],
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
         <div className="w-full sm:w-64">
-          <TextInput
-            name="search"
-            placeholder="Search faculties..."
+          <LiveSearchInput
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onValueChange={setSearchQuery}
+            suggestionsLoader={() => suggestions}
+            placeholder="Search faculties..."
+            onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
           />
         </div>
       </div>
 
       {filteredFaculties.length === 0 && searchQuery ? (
         <div className="text-center py-8 text-[color:var(--color-text-muted)]">
-          No faculties found matching "{searchQuery}"
-        </div>
+            No faculties found matching &quot;{searchQuery}&quot;
+          </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-separate border-spacing-0">
@@ -56,7 +89,7 @@ export function FacultyTable({ faculties }: { faculties: any[] }) {
               {filteredFaculties.map((faculty) => (
                 <tr key={faculty.id} className="align-top hover:bg-[color:var(--color-bg-light)] transition-colors">
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4">
-                    <div className="font-semibold text-[color:var(--color-primary-dark)]">{faculty.name}</div>
+                    <div className="font-semibold text-[color:var(--color-primary-dark)]">{displayFacultyName(faculty.name)}</div>
                     {faculty.aliases ? (
                       <div className="mt-1 text-xs text-[color:var(--color-text-muted)]">{faculty.aliases}</div>
                     ) : null}
@@ -74,7 +107,7 @@ export function FacultyTable({ faculties }: { faculties: any[] }) {
                     {faculty._count.resources} | FAQs {faculty._count.faqs}
                   </td>
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)]">
-                    {formatDate(faculty.lastVerified)}
+                    {formatIsoDate(faculty.lastVerified, "Not set")}
                   </td>
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-right">
                     <Link

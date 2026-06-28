@@ -1,5 +1,5 @@
 {
-  "name": "project-asc-next",
+  "name": "academic-success-coaches-next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:admin-nav": "node --test --import tsx tests/admin-nav.test.ts",
+    "test:ui-metrics": "node --test --import tsx tests/admin-nav.test.ts tests/faculty-and-programme-display.test.ts tests/metric-card.test.tsx tests/search-suggestions.test.ts tests/course-module-resource-filters.test.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate:deploy": "prisma migrate deploy",
@@ -28,7 +30,6 @@
     "pg": "^8.21.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "recharts": "^3.8.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

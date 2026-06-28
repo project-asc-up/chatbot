@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Modal } from '@/components/modal';
 import { Field, TextInput, TextArea, Select } from '@/components/admin-form';
+import { displayFacultyName } from '@/lib/faculty-display';
 import { createProgramme } from '@/lib/admin-actions';
 
 interface CreateProgrammeModalProps {
@@ -49,7 +50,7 @@ export function CreateProgrammeModal({ faculties }: CreateProgrammeModalProps) {
                 </option>
                 {faculties.map((faculty) => (
                   <option key={faculty.id} value={faculty.id}>
-                    {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)} ({faculty.code})
                   </option>
                 ))}
               </Select>

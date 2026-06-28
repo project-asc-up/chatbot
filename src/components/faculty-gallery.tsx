@@ -5,8 +5,12 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { TextInput } from "@/components/admin-form";
+import { MetricCard, MetricGrid } from "@/components/metric-card";
+import { LiveSearchInput } from "@/components/live-search-input";
+import { formatIsoDate, type DisplayDateValue } from "@/lib/date-display";
+import { displayFacultyName } from "@/lib/faculty-display";
 import { cn } from "@/lib/cn";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
 type FacultyRow = {
   id: string;
@@ -15,7 +19,7 @@ type FacultyRow = {
   codeStatus: string;
   officialPageUrl: string | null;
   supportPageUrl: string | null;
-  lastVerified: Date | null;
+  lastVerified: DisplayDateValue;
   aliases: string | null;
   _count: {
     ascCoaches: number;
@@ -24,10 +28,6 @@ type FacultyRow = {
     faqs: number;
   };
 };
-
-function formatDate(value: Date | null) {
-  return value ? value.toISOString().slice(0, 10) : "Not set";
-}
 
 function splitAliases(value: string | null) {
   if (!value) return [];
@@ -103,6 +103,23 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
 
   const visibleCount = filteredFaculties.length;
 
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        faculties.map((faculty) => ({
+          id: faculty.id,
+          title: displayFacultyName(faculty.name),
+          value: faculty.name,
+          detail: `${faculty.code} · ${faculty.aliases ?? "No aliases"}`,
+          badge: faculty.codeStatus,
+          searchText: [faculty.name, faculty.code, faculty.aliases, faculty.codeStatus].filter(Boolean).join(" "),
+        })),
+        6,
+      ),
+    [faculties, searchQuery],
+  );
+
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.85fr)]">
       <div className="space-y-4">
@@ -121,44 +138,46 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Visible</div>
-                  <div className="mt-1 text-lg font-semibold">{visibleCount}</div>
-                </div>
-                <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Verified</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {faculties.filter((faculty) => faculty.codeStatus.toLowerCase().includes("verified")).length}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Need review</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {faculties.filter((faculty) => {
-                      const normalized = faculty.codeStatus.toLowerCase();
-                      return normalized.includes("review") || normalized.includes("pending");
-                    }).length}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Content</div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {faculties.reduce(
-                      (sum, faculty) =>
-                        sum + faculty._count.ascCoaches + faculty._count.programmes + faculty._count.resources + faculty._count.faqs,
-                      0,
-                    )}
-                  </div>
-                </div>
-              </div>
+              <MetricGrid className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+                <MetricCard compact label="Visible" value={visibleCount} detail="Matching faculties." className="bg-[var(--color-surface)]" />
+                <MetricCard
+                  compact
+                  label="Verified"
+                  value={faculties.filter((faculty) => faculty.codeStatus.toLowerCase().includes("verified")).length}
+                  detail="Status is verified."
+                  className="bg-[var(--color-surface)]"
+                />
+                <MetricCard
+                  compact
+                  label="Need review"
+                  value={faculties.filter((faculty) => {
+                    const normalized = faculty.codeStatus.toLowerCase();
+                    return normalized.includes("review") || normalized.includes("pending");
+                  }).length}
+                  detail="Status needs attention."
+                  className="bg-[var(--color-surface)]"
+                />
+                <MetricCard
+                  compact
+                  label="Content"
+                  value={faculties.reduce(
+                    (sum, faculty) =>
+                      sum + faculty._count.ascCoaches + faculty._count.programmes + faculty._count.resources + faculty._count.faqs,
+                    0,
+                  )}
+                  detail="Linked content total."
+                  className="bg-[var(--color-surface)]"
+                />
+              </MetricGrid>
             </div>
 
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1.3fr)_auto] lg:items-end">
-              <TextInput
+              <LiveSearchInput
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
+                onValueChange={setSearchQuery}
+                suggestionsLoader={() => suggestions}
                 placeholder="Search by faculty name, code, or alias"
+                onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
               />
 
               <div className="flex flex-wrap gap-2">
@@ -223,7 +242,7 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
                     <CardHeader className="flex-row items-start justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <CardTitle className="text-xl">{faculty.name}</CardTitle>
+                          <CardTitle className="text-xl">{displayFacultyName(faculty.name)}</CardTitle>
                           <Badge tone="neutral" outlined>
                             {faculty.code}
                           </Badge>
@@ -246,26 +265,25 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
 
                     <CardBody className="pt-0">
                       <div className="grid gap-3 md:grid-cols-[1.5fr_1fr]">
-                        <div className="grid grid-cols-2 gap-3">
+                        <MetricGrid className="grid-cols-1 sm:grid-cols-2 gap-3">
                           {metricList(faculty).map((metric) => (
-                            <div
+                            <MetricCard
                               key={metric.label}
-                              className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2"
-                            >
-                              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-                                {metric.label}
-                              </div>
-                              <div className="mt-1 text-lg font-semibold">{metric.value}</div>
-                            </div>
+                              compact
+                              label={metric.label}
+                              value={metric.value}
+                              detail="Faculty metric."
+                              className="bg-[var(--color-surface)]"
+                            />
                           ))}
-                        </div>
+                        </MetricGrid>
 
                         <div className="space-y-3">
                           <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
                             <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                               Last verified
                             </div>
-                            <div className="mt-1 font-medium">{formatDate(faculty.lastVerified)}</div>
+                            <div className="mt-1 font-medium">{formatIsoDate(faculty.lastVerified, "Not set")}</div>
                           </div>
                           <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
                             <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
@@ -325,7 +343,7 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
                   {statusLabel(selectedFaculty.codeStatus)}
                 </Badge>
               </div>
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight">{selectedFaculty.name}</h3>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight">{displayFacultyName(selectedFaculty.name)}</h3>
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
                 Detail view for the selected faculty. Use this panel to understand the record at a glance before opening
                 the full editor.
@@ -333,19 +351,18 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
             </div>
 
             <CardBody className="space-y-5">
-              <div className="grid grid-cols-2 gap-3">
+              <MetricGrid className="grid-cols-1 sm:grid-cols-2 gap-3">
                 {metricList(selectedFaculty).map((metric) => (
-                  <div
+                  <MetricCard
                     key={metric.label}
-                    className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
-                  >
-                    <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-                      {metric.label}
-                    </div>
-                    <div className="mt-1 text-xl font-semibold">{metric.value}</div>
-                  </div>
+                    compact
+                    label={metric.label}
+                    value={metric.value}
+                    detail="Selected faculty metric."
+                    className="bg-[var(--color-surface)]"
+                  />
                 ))}
-              </div>
+              </MetricGrid>
 
               <div className="space-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
                 <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
@@ -362,7 +379,7 @@ export function FacultyGallery({ faculties }: FacultyGalleryProps) {
                   </div>
                   <div className="flex items-start justify-between gap-4">
                     <dt className="text-[var(--color-text-muted)]">Last verified</dt>
-                    <dd className="font-medium text-right">{formatDate(selectedFaculty.lastVerified)}</dd>
+                    <dd className="font-medium text-right">{formatIsoDate(selectedFaculty.lastVerified, "Not set")}</dd>
                   </div>
                 </dl>
               </div>

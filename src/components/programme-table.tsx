@@ -1,31 +1,76 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
-import { TextInput, Field } from "@/components/admin-form";
 
-function formatDate(value: Date | null) {
-  return value ? value.toISOString().slice(0, 10) : "Not set";
-}
+import { Field } from "@/components/admin-form";
+import { LiveSearchInput } from "@/components/live-search-input";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
-export function ProgrammeTable({ programmes, faculties }: Readonly<{ programmes: any[]; faculties: any[] }>) {
+type ProgrammeRow = {
+  id: string;
+  programmeName: string;
+  programmeCode: string;
+  degreeName: string | null;
+  facultyId: string | null;
+  faculty?: { id: string; name: string; code: string } | null;
+  _count?: {
+    courseModules?: number;
+  };
+};
+
+type FacultyRow = {
+  id: string;
+  name: string;
+  code: string;
+};
+
+export function ProgrammeTable({
+  programmes,
+  faculties,
+}: Readonly<{ programmes: ProgrammeRow[]; faculties: FacultyRow[] }>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProgrammes = useMemo(() => {
     if (!searchQuery.trim()) return programmes;
     const q = searchQuery.toLowerCase();
     return programmes.filter(
-      (prog) =>
-        prog.programmeName?.toLowerCase().includes(q) ||
-        prog.programmeCode?.toLowerCase().includes(q) ||
-        prog.degreeName?.toLowerCase().includes(q) ||
-        prog.faculty?.name?.toLowerCase().includes(q)
+      (programme) =>
+        programme.programmeName?.toLowerCase().includes(q) ||
+        programme.programmeCode?.toLowerCase().includes(q) ||
+        programme.degreeName?.toLowerCase().includes(q) ||
+        programme.faculty?.name?.toLowerCase().includes(q),
     );
   }, [programmes, searchQuery]);
 
-  const getFacultyName = (facultyId: string) => {
-    return faculties.find((f) => f.id === facultyId)?.name || "Unknown";
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        programmes.map((programme) => ({
+          id: programme.id,
+          title: `${programme.programmeCode} · ${programme.programmeName}`,
+          value: programme.programmeName ?? programme.programmeCode,
+          detail: `${displayFacultyName(programme.faculty?.name ?? "Unknown")} · ${programme.degreeName ?? "No degree"}`,
+          badge: programme.programmeCode,
+          searchText: [
+            programme.programmeName,
+            programme.programmeCode,
+            programme.degreeName,
+            programme.faculty?.name,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        })),
+        6,
+      ),
+    [programmes, searchQuery],
+  );
+
+  const getFacultyName = (facultyId: string | null) => {
+    if (!facultyId) return "General";
+    return displayFacultyName(faculties.find((f) => f.id === facultyId)?.name || "Unknown");
   };
 
   return (
@@ -33,15 +78,13 @@ export function ProgrammeTable({ programmes, faculties }: Readonly<{ programmes:
       <div className="flex items-end gap-4">
         <div className="flex-1">
           <Field label="Search programmes" hint="By code, name, degree, or faculty">
-            <div className="relative flex items-center">
-              <TextInput
-                placeholder="Search programmes..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-[color:var(--color-text-muted)]" size={16} />
-            </div>
+            <LiveSearchInput
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              suggestionsLoader={() => suggestions}
+              placeholder="Search programmes..."
+              onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
+            />
           </Field>
         </div>
       </div>
@@ -61,13 +104,16 @@ export function ProgrammeTable({ programmes, faculties }: Readonly<{ programmes:
           <tbody>
             {filteredProgrammes.length === 0 ? (
               <tr>
-                <td colSpan={6} className="border-b border-[color:var(--color-border)] px-4 py-8 text-center text-[color:var(--color-text-muted)]">
+                <td
+                  colSpan={6}
+                  className="border-b border-[color:var(--color-border)] px-4 py-8 text-center text-[color:var(--color-text-muted)]"
+                >
                   No programmes found matching your search
                 </td>
               </tr>
             ) : (
               filteredProgrammes.map((programme) => (
-                <tr key={programme.id} className="align-top hover:bg-[color:var(--color-bg-light)] transition-colors">
+                <tr key={programme.id} className="align-top transition-colors hover:bg-[color:var(--color-bg-light)]">
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4">
                     <div className="font-semibold text-[color:var(--color-primary-dark)]">{programme.programmeName}</div>
                   </td>

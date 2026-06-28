@@ -2,10 +2,27 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
-import { TextInput, Field } from "@/components/admin-form";
+import { Field } from "@/components/admin-form";
+import { LiveSearchInput } from "@/components/live-search-input";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
-export function ResourceTable({ resources, faculties }: Readonly<{ resources: any[]; faculties: any[] }>) {
+type ResourceRow = {
+  id: string;
+  title: string;
+  category: string;
+  url: string;
+  facultyId: string | null;
+  faculty?: { id: string; name: string; code: string } | null;
+};
+
+type FacultyRow = {
+  id: string;
+  name: string;
+  code: string;
+};
+
+export function ResourceTable({ resources, faculties }: Readonly<{ resources: ResourceRow[]; faculties: FacultyRow[] }>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredResources = useMemo(() => {
@@ -20,6 +37,25 @@ export function ResourceTable({ resources, faculties }: Readonly<{ resources: an
     );
   }, [resources, searchQuery]);
 
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        resources.map((resource) => ({
+          id: resource.id,
+          title: resource.title,
+          value: resource.title,
+          detail: `${resource.category} · ${displayFacultyName(resource.faculty?.name ?? "General")}`,
+          badge: resource.faculty?.code ?? "General",
+          searchText: [resource.title, resource.category, resource.url, resource.faculty?.name, resource.faculty?.code]
+            .filter(Boolean)
+            .join(" "),
+        })),
+        6,
+      ),
+    [resources, searchQuery],
+  );
+
   const getFacultyName = (facultyId: string | null) => {
     if (!facultyId) return "General";
     return faculties.find((f) => f.id === facultyId)?.name || "Unknown";
@@ -30,15 +66,13 @@ export function ResourceTable({ resources, faculties }: Readonly<{ resources: an
       <div className="flex items-end gap-4">
         <div className="flex-1">
           <Field label="Search resources" hint="By title, category, URL, or faculty">
-            <div className="relative flex items-center">
-              <TextInput
-                placeholder="Search resources..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-[color:var(--color-text-muted)]" size={16} />
-            </div>
+            <LiveSearchInput
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              suggestionsLoader={() => suggestions}
+              placeholder="Search resources..."
+              onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
+            />
           </Field>
         </div>
       </div>
@@ -73,7 +107,7 @@ export function ResourceTable({ resources, faculties }: Readonly<{ resources: an
                     </span>
                   </td>
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)]">
-                    {getFacultyName(resource.facultyId)}
+                    {displayFacultyName(getFacultyName(resource.facultyId))}
                   </td>
                   <td className="border-b border-[color:var(--color-border)] px-4 py-4 text-sm text-[color:var(--color-text-muted)] truncate max-w-xs">
                     <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-[color:var(--color-primary)] hover:underline">

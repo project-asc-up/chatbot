@@ -1,4 +1,5 @@
 import { AdminShell } from "@/components/admin-shell";
+import { MetricCard, MetricGrid } from "@/components/metric-card";
 
 const metrics = [
   { label: "Phase", value: "1 / 6", detail: "Design system and app shell" },
@@ -118,22 +119,16 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricGrid className="md:grid-cols-2 xl:grid-cols-4">
           {metrics.map((item) => (
-            <article
+            <MetricCard
               key={item.label}
-              className="rounded-[1.5rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.05)]"
-            >
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-                {item.label}
-              </p>
-              <div className="mt-4 text-3xl font-semibold tracking-tight text-[color:var(--color-primary-dark)]">
-                {item.value}
-              </div>
-              <p className="mt-2 text-sm leading-6 text-[color:var(--color-text-muted)]">{item.detail}</p>
-            </article>
+              label={item.label}
+              value={item.value}
+              detail={item.detail}
+            />
           ))}
-        </section>
+        </MetricGrid>
 
         <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
           <article className="rounded-[1.75rem] border border-[color:var(--color-border)] bg-white p-6 shadow-[0_12px_40px_rgba(0,32,80,0.05)] sm:p-8">

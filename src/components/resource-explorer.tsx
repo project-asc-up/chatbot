@@ -1,5 +1,14 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ExternalLink, FileText, MapPin } from "lucide-react";
+
+import { Field, Select } from "@/components/admin-form";
+import { MetricCard, MetricGrid } from "@/components/metric-card";
+import { formatReadableDate, type DisplayDateValue } from "@/lib/date-display";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { buildResourceFacultyOptions, filterResourcesByFaculty } from "@/lib/resource-filters";
 
 type ResourceRow = {
   id: string;
@@ -9,7 +18,7 @@ type ResourceRow = {
   description: string | null;
   url: string;
   sourceUrl: string | null;
-  lastVerified: Date | null;
+  lastVerified: DisplayDateValue;
   faculty: { id: string; name: string; code: string } | null;
 };
 
@@ -21,18 +30,18 @@ function getHostName(url: string) {
   }
 }
 
-function formatDate(value: Date | null) {
-  if (!value) return "Unverified";
-  return new Intl.DateTimeFormat("en-ZA", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(value);
-}
-
 export function ResourceExplorer({ resources }: { resources: ResourceRow[] }) {
-  const grouped = resources.reduce<Map<string, ResourceRow[]>>((acc, resource) => {
-    const key = resource.faculty?.name ?? "General";
+  const [facultyFilter, setFacultyFilter] = useState("all");
+
+  const facultyOptions = useMemo(() => buildResourceFacultyOptions(resources), [resources]);
+
+  const filteredResources = useMemo(
+    () => filterResourcesByFaculty(resources, facultyFilter),
+    [facultyFilter, resources],
+  );
+
+  const grouped = filteredResources.reduce<Map<string, ResourceRow[]>>((acc, resource) => {
+    const key = resource.faculty ? displayFacultyName(resource.faculty.name) : "General";
     const list = acc.get(key) ?? [];
     list.push(resource);
     acc.set(key, list);
@@ -45,36 +54,32 @@ export function ResourceExplorer({ resources }: { resources: ResourceRow[] }) {
     return left.localeCompare(right);
   });
 
-  const generalCount = grouped.get("General")?.length ?? 0;
+  const generalCount = filteredResources.filter((resource) => !resource.faculty).length;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Total resources
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {resources.length}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Faculty linked
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {resources.length - generalCount}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            General library
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {generalCount}
-          </div>
-        </div>
-      </div>
+      <Field label="Faculty filter" hint="All or a specific faculty">
+        <Select value={facultyFilter} onChange={(event) => setFacultyFilter(event.target.value)}>
+          <option value="all">All faculties</option>
+          {facultyOptions.map((faculty) => (
+            <option key={faculty.id} value={faculty.id}>
+              {displayFacultyName(faculty.name)}
+            </option>
+          ))}
+        </Select>
+      </Field>
+
+      <MetricGrid className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+        <MetricCard compact label="Total resources" value={filteredResources.length} detail="All support links." className="bg-[color:var(--color-bg-light)]" />
+        <MetricCard
+          compact
+          label="Faculty linked"
+          value={filteredResources.length - generalCount}
+          detail="Scoped to a faculty."
+          className="bg-[color:var(--color-bg-light)]"
+        />
+        <MetricCard compact label="General library" value={generalCount} detail="Shared support links." className="bg-[color:var(--color-bg-light)]" />
+      </MetricGrid>
 
       <div className="space-y-8">
         {sections.map(([facultyName, items]) => (
@@ -104,7 +109,7 @@ export function ResourceExplorer({ resources }: { resources: ResourceRow[] }) {
                       {resource.category}
                     </span>
                     <span className="rounded-full border border-[color:var(--color-border)] px-3 py-1 text-xs font-medium text-[color:var(--color-text-muted)]">
-                      {formatDate(resource.lastVerified)}
+                      {formatReadableDate(resource.lastVerified)}
                     </span>
                   </div>
 
@@ -127,7 +132,7 @@ export function ResourceExplorer({ resources }: { resources: ResourceRow[] }) {
                       <div className="flex items-center gap-2">
                         <MapPin size={15} />
                         <span>
-                          {resource.faculty.code} - {resource.faculty.name}
+                          {resource.faculty.code} - {displayFacultyName(resource.faculty.name)}
                         </span>
                       </div>
                     ) : null}

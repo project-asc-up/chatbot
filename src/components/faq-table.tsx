@@ -2,10 +2,28 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
-import { TextInput, Field } from "@/components/admin-form";
+import { Field } from "@/components/admin-form";
+import { LiveSearchInput } from "@/components/live-search-input";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
-export function FaqTable({ faqs, faculties }: Readonly<{ faqs: any[]; faculties: any[] }>) {
+type FaqRow = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  priority: number | null;
+  facultyId: string | null;
+  faculty?: { id: string; name: string; code: string } | null;
+};
+
+type FacultyRow = {
+  id: string;
+  name: string;
+  code: string;
+};
+
+export function FaqTable({ faqs, faculties }: Readonly<{ faqs: FaqRow[]; faculties: FacultyRow[] }>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFaqs = useMemo(() => {
@@ -20,6 +38,25 @@ export function FaqTable({ faqs, faculties }: Readonly<{ faqs: any[]; faculties:
     );
   }, [faqs, searchQuery]);
 
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        faqs.map((faq) => ({
+          id: faq.id,
+          title: faq.question,
+          value: faq.question,
+          detail: `${faq.category} · ${displayFacultyName(faq.faculty?.name ?? "General")}`,
+          badge: faq.faculty?.code ?? "General",
+          searchText: [faq.question, faq.answer, faq.category, faq.faculty?.name, faq.faculty?.code]
+            .filter(Boolean)
+            .join(" "),
+        })),
+        6,
+      ),
+    [faqs, searchQuery],
+  );
+
   const getFacultyName = (facultyId: string | null) => {
     if (!facultyId) return "General";
     return faculties.find((f) => f.id === facultyId)?.name || "Unknown";
@@ -30,15 +67,13 @@ export function FaqTable({ faqs, faculties }: Readonly<{ faqs: any[]; faculties:
       <div className="flex items-end gap-4">
         <div className="flex-1">
           <Field label="Search FAQs" hint="By question, answer, category, or faculty">
-            <div className="relative flex items-center">
-              <TextInput
-                placeholder="Search FAQs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-[color:var(--color-text-muted)]" size={16} />
-            </div>
+            <LiveSearchInput
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              suggestionsLoader={() => suggestions}
+              placeholder="Search FAQs..."
+              onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
+            />
           </Field>
         </div>
       </div>
@@ -60,7 +95,7 @@ export function FaqTable({ faqs, faculties }: Readonly<{ faqs: any[]; faculties:
                       {faq.category}
                     </span>
                     <span className="rounded-full bg-white border border-[color:var(--color-border)] px-3 py-1 text-xs font-medium text-[color:var(--color-text-muted)]">
-                      {getFacultyName(faq.facultyId)}
+                      {displayFacultyName(getFacultyName(faq.facultyId))}
                     </span>
                   </div>
                 </div>

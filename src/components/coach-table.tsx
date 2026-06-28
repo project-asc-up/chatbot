@@ -2,30 +2,72 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
-import { TextInput, Field } from "@/components/admin-form";
+import { Field } from "@/components/admin-form";
+import { LiveSearchInput } from "@/components/live-search-input";
+import { coachMatchesQuery } from "@/lib/coach-search";
+import { displayFacultyName } from "@/lib/faculty-display";
+import { rankSuggestions } from "@/lib/search-suggestions";
 
-function formatDate(value: Date | null) {
-  return value ? value.toISOString().slice(0, 10) : "Not set";
-}
+type LegacyCoach = {
+  id: string;
+  name: string;
+  role?: string | null;
+  email: string;
+  facultyId: string | null;
+  faculty?: {
+    id: string;
+    name: string;
+    code: string;
+  } | null;
+  level: string;
+};
 
-export function CoachTable({ coaches, faculties }: Readonly<{ coaches: any[]; faculties: any[] }>) {
+export function CoachTable({ coaches, faculties }: Readonly<{ coaches: LegacyCoach[]; faculties: LegacyCoach["faculty"][] }>) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCoaches = useMemo(() => {
     if (!searchQuery.trim()) return coaches;
-    const q = searchQuery.toLowerCase();
     return coaches.filter(
       (coach) =>
-        coach.name?.toLowerCase().includes(q) ||
-        coach.role?.toLowerCase().includes(q) ||
-        coach.email?.toLowerCase().includes(q) ||
-        coach.faculty?.name?.toLowerCase().includes(q)
+        coachMatchesQuery(
+          {
+            id: coach.id,
+            name: coach.name,
+            email: coach.email,
+            titleRole: coach.role ?? null,
+            cluster: null,
+            faculty: {
+              id: coach.facultyId ?? "general",
+              name: coach.faculty?.name ?? "General",
+              code: coach.faculty?.code ?? "GEN",
+            },
+          },
+          searchQuery,
+        )
     );
   }, [coaches, searchQuery]);
 
+  const suggestions = useMemo(
+    () =>
+      rankSuggestions(
+        searchQuery,
+        coaches.map((coach) => ({
+          id: coach.id,
+          title: coach.name,
+          value: coach.name,
+          detail: `${coach.email} · ${displayFacultyName(coach.faculty?.name ?? "General")}`,
+          badge: coach.faculty?.code ?? "GEN",
+          searchText: [coach.name, coach.email, coach.role, coach.faculty?.name, coach.faculty?.code]
+            .filter(Boolean)
+            .join(" "),
+        })),
+        6,
+      ),
+    [coaches, searchQuery],
+  );
+
   const getFacultyName = (facultyId: string | null) => {
-    return faculties.find((f) => f.id === facultyId)?.name || "General";
+    return displayFacultyName(faculties.find((f) => f?.id === facultyId)?.name || "General");
   };
 
   return (
@@ -33,15 +75,13 @@ export function CoachTable({ coaches, faculties }: Readonly<{ coaches: any[]; fa
       <div className="flex items-end gap-4">
         <div className="flex-1">
           <Field label="Search coaches" hint="By name, role, email, or faculty">
-            <div className="relative flex items-center">
-              <TextInput
-                placeholder="Search coaches..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-[color:var(--color-text-muted)]" size={16} />
-            </div>
+            <LiveSearchInput
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              suggestionsLoader={() => suggestions}
+              placeholder="Search coaches..."
+              onSelectSuggestion={(suggestion) => setSearchQuery(suggestion.value)}
+            />
           </Field>
         </div>
       </div>

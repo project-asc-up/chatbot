@@ -17,7 +17,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project ASC Admin",
+  title: "Academic Success Coaches Admin",
   description:
     "University of Pretoria Academic Success Coach content administration workspace",
 };

@@ -11,6 +11,7 @@ import {
 } from "@/components/admin-form";
 import { deleteCoach, updateCoach } from "@/lib/admin-actions";
 import { getFacultyOptions, getCoachById } from "@/lib/admin-queries";
+import { displayFacultyName } from "@/lib/faculty-display";
 
 function formatDate(value: Date | null) {
   return value ? value.toISOString().slice(0, 10) : "";
@@ -36,7 +37,7 @@ export default async function CoachDetailPage({
       <PageHeader
         eyebrow="Coach detail"
         title={coach.name}
-        description={`${coach.faculty.code} | ${coach.faculty.name} | ${coach.email}`}
+        description={`${coach.faculty.code} | ${displayFacultyName(coach.faculty.name)} | ${coach.email}`}
         action={
           <form action={deleteAction}>
             <ActionButton tone="danger">Delete coach</ActionButton>
@@ -50,7 +51,7 @@ export default async function CoachDetailPage({
             <Select name="facultyId" defaultValue={coach.facultyId} required>
               {faculties.map((faculty) => (
                 <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)}
                 </option>
               ))}
             </Select>

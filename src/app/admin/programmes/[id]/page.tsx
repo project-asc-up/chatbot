@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ActionButton, Field, PageHeader, Section, Select, TextArea, TextInput } from "@/components/admin-form";
 import { deleteProgramme, updateProgramme } from "@/lib/admin-actions";
 import { getFacultyOptions, getProgrammeById } from "@/lib/admin-queries";
+import { displayFacultyName } from "@/lib/faculty-display";
 
 function formatDate(value: Date | null) {
   return value ? value.toISOString().slice(0, 10) : "";
@@ -28,7 +29,7 @@ export default async function ProgrammeDetailPage({
       <PageHeader
         eyebrow="Programme detail"
         title={programme.programmeName}
-        description={`${programme.programmeCode} | ${programme.faculty.code} | ${programme.faculty.name}`}
+        description={`${programme.programmeCode} | ${programme.faculty.code} | ${displayFacultyName(programme.faculty.name)}`}
         action={
           <form action={deleteAction}>
             <ActionButton tone="danger">Delete programme</ActionButton>
@@ -42,7 +43,7 @@ export default async function ProgrammeDetailPage({
             <Select name="facultyId" defaultValue={programme.facultyId} required>
               {faculties.map((faculty) => (
                 <option key={faculty.id} value={faculty.id}>
-                  {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)} ({faculty.code})
                 </option>
               ))}
             </Select>

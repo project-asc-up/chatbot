@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { BookOpen, ChevronRight, Hash } from "lucide-react";
 
+import { MetricCard, MetricGrid } from "@/components/metric-card";
+import { displayFacultyName } from "@/lib/faculty-display";
+
 type ModuleRow = {
   id: string;
   moduleCode: string;
@@ -39,7 +42,7 @@ export function CourseModuleAtlas({
   query?: string;
 }) {
   const grouped = rows.reduce<Map<string, ModuleRow[]>>((acc, row) => {
-    const key = `${row.programme.faculty.code} - ${row.programme.faculty.name}`;
+    const key = `${row.programme.faculty.code} - ${displayFacultyName(row.programme.faculty.name)}`;
     const list = acc.get(key) ?? [];
     list.push(row);
     acc.set(key, list);
@@ -50,32 +53,11 @@ export function CourseModuleAtlas({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Results
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {total}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Current page
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {currentPage} / {totalPages}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Current slice
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {rows.length}
-          </div>
-        </div>
-      </div>
+      <MetricGrid className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+        <MetricCard compact label="Results" value={total} detail="Matching module rows." className="bg-[color:var(--color-bg-light)]" />
+        <MetricCard compact label="Current page" value={`${currentPage} / ${totalPages}`} detail="Pagination position." className="bg-[color:var(--color-bg-light)]" />
+        <MetricCard compact label="Current slice" value={rows.length} detail="Rows on this page." className="bg-[color:var(--color-bg-light)]" />
+      </MetricGrid>
 
       {query ? (
         <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] px-4 py-3 text-sm text-[color:var(--color-text-muted)]">
@@ -133,7 +115,7 @@ export function CourseModuleAtlas({
                     </div>
 
                     <p className="mt-3 text-sm leading-6 text-[color:var(--color-text-muted)]">
-                      {module.programme.faculty.code} - {module.programme.faculty.name}
+                      {module.programme.faculty.code} - {displayFacultyName(module.programme.faculty.name)}
                       <br />
                       {module.programme.programmeCode} - {safeString(module.programme.programmeName)}
                     </p>

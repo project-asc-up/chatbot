@@ -1,32 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+
+import { LiveSearchInput } from "@/components/live-search-input";
+import type { SearchSuggestion } from "@/lib/search-suggestions";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/admin/search?q=${encodeURIComponent(query)}`);
-    }
-  };
+  const loadSuggestions = useCallback(async (value: string) => {
+    const response = await fetch(`/api/admin/search-suggestions?q=${encodeURIComponent(value)}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) return [];
+
+    const payload = (await response.json()) as { suggestions?: SearchSuggestion[] };
+    return payload.suggestions ?? [];
+  }, []);
 
   return (
-    <form onSubmit={handleSearch} className="hidden sm:flex">
-      <div className="relative flex items-center">
-        <input
-          type="text"
-          placeholder="Search across all tables..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 pl-10 text-sm font-medium text-[color:var(--color-text)] placeholder-[color:var(--color-text-muted)] transition-smooth hover:border-[color:var(--color-primary)] focus:border-[color:var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-focus-ring)]"
-        />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-[color:var(--color-text-muted)]" size={16} />
-      </div>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (query.trim()) {
+          router.push(`/admin/search?q=${encodeURIComponent(query.trim())}`);
+        }
+      }}
+      className="hidden sm:block"
+    >
+      <LiveSearchInput
+        value={query}
+        onValueChange={setQuery}
+        suggestionsLoader={loadSuggestions}
+        placeholder="Search across all tables..."
+        inputClassName="pr-4"
+      />
     </form>
   );
 }

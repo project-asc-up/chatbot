@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ChevronDown, HelpCircle, Tag } from "lucide-react";
 
+import { MetricCard, MetricGrid } from "@/components/metric-card";
+import { formatReadableDate, type DisplayDateValue } from "@/lib/date-display";
+import { displayFacultyName } from "@/lib/faculty-display";
+
 type FaqRow = {
   id: string;
   seedKey: string | null;
@@ -9,22 +13,13 @@ type FaqRow = {
   category: string;
   priority: number | null;
   sourceUrl: string | null;
-  lastVerified: Date | null;
+  lastVerified: DisplayDateValue;
   faculty: { id: string; name: string; code: string } | null;
 };
 
-function formatDate(value: Date | null) {
-  if (!value) return "Unverified";
-  return new Intl.DateTimeFormat("en-ZA", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(value);
-}
-
 export function FaqExplorer({ faqs }: { faqs: FaqRow[] }) {
   const grouped = faqs.reduce<Map<string, FaqRow[]>>((acc, faq) => {
-    const key = faq.faculty?.name ?? "General";
+    const key = faq.faculty ? displayFacultyName(faq.faculty.name) : "General";
     const list = acc.get(key) ?? [];
     list.push(faq);
     acc.set(key, list);
@@ -41,32 +36,17 @@ export function FaqExplorer({ faqs }: { faqs: FaqRow[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Total FAQs
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {faqs.length}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            Faculty linked
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {faqs.length - generalCount}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-bg-light)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--color-text-muted)]">
-            General answers
-          </p>
-          <div className="mt-3 text-3xl font-semibold text-[color:var(--color-primary-dark)]">
-            {generalCount}
-          </div>
-        </div>
-      </div>
+      <MetricGrid className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+        <MetricCard compact label="Total FAQs" value={faqs.length} detail="All FAQ entries." className="bg-[color:var(--color-bg-light)]" />
+        <MetricCard
+          compact
+          label="Faculty linked"
+          value={faqs.length - generalCount}
+          detail="Assigned to a faculty."
+          className="bg-[color:var(--color-bg-light)]"
+        />
+        <MetricCard compact label="General answers" value={generalCount} detail="Shared support responses." className="bg-[color:var(--color-bg-light)]" />
+      </MetricGrid>
 
       <div className="space-y-8">
         {sections.map(([facultyName, items]) => (
@@ -120,7 +100,7 @@ export function FaqExplorer({ faqs }: { faqs: FaqRow[] }) {
                   </details>
 
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[color:var(--color-text-muted)]">
-                    <span>Verified {formatDate(faq.lastVerified)}</span>
+                    <span>Verified {formatReadableDate(faq.lastVerified)}</span>
                     <Link
                       href={`/admin/faqs/${faq.id}`}
                       className="inline-flex rounded-full border border-[color:var(--color-border)] px-4 py-2 text-sm font-semibold text-[color:var(--color-primary)] transition hover:border-[color:var(--color-primary)] hover:bg-[color:var(--color-bg-light)]"

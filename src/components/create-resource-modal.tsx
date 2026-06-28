@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Modal } from '@/components/modal';
 import { Field, TextInput, TextArea, Select } from '@/components/admin-form';
+import { displayFacultyName } from '@/lib/faculty-display';
 import { createResource } from '@/lib/admin-actions';
 
 interface CreateResourceModalProps {
@@ -47,7 +48,7 @@ export function CreateResourceModal({ faculties }: CreateResourceModalProps) {
                 <option value="">General</option>
                 {faculties.map((faculty) => (
                   <option key={faculty.id} value={faculty.id}>
-                    {faculty.name} ({faculty.code})
+                  {displayFacultyName(faculty.name)} ({faculty.code})
                   </option>
                 ))}
               </Select>

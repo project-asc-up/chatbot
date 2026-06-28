@@ -1,59 +1,59 @@
 @import "tailwindcss";
 
 /* ================================================================
-   Design tokens — Project ASC Admin
+   Design tokens - Academic Success Coaches Admin
    Light theme is the default in :root. Dark theme is .dark mode.
-   Colours expressed in oklch for perceptually-uniform tints.
+   Brand colors follow the official University of Pretoria palette.
    ================================================================ */
 
 :root {
-  /* Brand — modernised UP navy */
-  --color-brand: oklch(48% 0.16 252);
-  --color-brand-foreground: oklch(98% 0.01 252);
-  --color-brand-soft: oklch(95% 0.04 252);
-  --color-brand-soft-foreground: oklch(28% 0.1 252);
-  --color-brand-strong: oklch(40% 0.18 252);
+  /* Brand */
+  --color-brand: #005baa;
+  --color-brand-foreground: #ffffff;
+  --color-brand-soft: #dcecf8;
+  --color-brand-soft-foreground: #003d73;
+  --color-brand-strong: #00457f;
 
   /* Surfaces */
-  --color-surface: oklch(99% 0.005 250);
-  --color-surface-raised: oklch(100% 0 0);
-  --color-surface-sunken: oklch(97% 0.005 250);
-  --color-surface-overlay: oklch(100% 0 0 / 0.85);
+  --color-surface: #f8fafc;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #eef4fa;
+  --color-surface-overlay: rgb(255 255 255 / 0.88);
 
   /* Text */
-  --color-text: oklch(20% 0.02 250);
-  --color-text-muted: oklch(45% 0.01 250);
-  --color-text-subtle: oklch(58% 0.01 250);
+  --color-text: #102133;
+  --color-text-muted: #516172;
+  --color-text-subtle: #6f7f90;
 
   /* Borders & rings */
-  --color-border: oklch(92% 0.005 250);
-  --color-border-strong: oklch(85% 0.005 250);
-  --color-ring: oklch(70% 0.15 65);
+  --color-border: #d5e0ea;
+  --color-border-strong: #b7c6d6;
+  --color-ring: #005baa;
 
-  /* Accent — single warm ochre */
-  --color-accent: oklch(70% 0.15 65);
-  --color-accent-foreground: oklch(20% 0.02 65);
+  /* Accent */
+  --color-accent: #c48b3b;
+  --color-accent-foreground: #1f1406;
 
   /* Semantic */
-  --color-success: oklch(64% 0.13 150);
-  --color-success-foreground: oklch(20% 0.05 150);
-  --color-success-soft: oklch(95% 0.05 150);
-  --color-warning: oklch(75% 0.14 75);
-  --color-warning-foreground: oklch(25% 0.05 75);
-  --color-warning-soft: oklch(96% 0.05 75);
-  --color-danger: oklch(60% 0.2 25);
-  --color-danger-foreground: oklch(20% 0.05 25);
-  --color-danger-soft: oklch(95% 0.05 25);
-  --color-info: oklch(70% 0.12 240);
-  --color-info-foreground: oklch(20% 0.05 240);
-  --color-info-soft: oklch(95% 0.05 240);
+  --color-success: #2f855a;
+  --color-success-foreground: #ffffff;
+  --color-success-soft: #e4f5ec;
+  --color-warning: #c48b3b;
+  --color-warning-foreground: #1f1406;
+  --color-warning-soft: #fbf0df;
+  --color-danger: #d71c33;
+  --color-danger-foreground: #ffffff;
+  --color-danger-soft: #fbe2e6;
+  --color-info: #2f6fb0;
+  --color-info-foreground: #ffffff;
+  --color-info-soft: #e3effa;
 
-  /* Data viz palette — categorical */
-  --color-chart-1: oklch(60% 0.18 252);
-  --color-chart-2: oklch(70% 0.15 65);
-  --color-chart-3: oklch(64% 0.13 150);
-  --color-chart-4: oklch(60% 0.2 25);
-  --color-chart-5: oklch(70% 0.12 290);
+  /* Data viz palette - categorical */
+  --color-chart-1: #005baa;
+  --color-chart-2: #d71c33;
+  --color-chart-3: #c48b3b;
+  --color-chart-4: #2f855a;
+  --color-chart-5: #5b5bd6;
 
   /* Radius scale */
   --radius-sm: 6px;
@@ -64,15 +64,15 @@
   --radius-full: 9999px;
 
   /* Shadow scale */
-  --shadow-xs: 0 1px 2px 0 oklch(20% 0.02 250 / 0.05);
-  --shadow-sm: 0 1px 3px 0 oklch(20% 0.02 250 / 0.08),
-    0 1px 2px -1px oklch(20% 0.02 250 / 0.04);
-  --shadow-md: 0 4px 12px -2px oklch(20% 0.02 250 / 0.10),
-    0 2px 6px -2px oklch(20% 0.02 250 / 0.06);
-  --shadow-lg: 0 12px 30px -6px oklch(20% 0.02 250 / 0.12),
-    0 4px 8px -2px oklch(20% 0.02 250 / 0.06);
-  --shadow-xl: 0 24px 60px -12px oklch(20% 0.02 250 / 0.18),
-    0 6px 12px -4px oklch(20% 0.02 250 / 0.08);
+  --shadow-xs: 0 1px 2px 0 rgb(16 33 51 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(16 33 51 / 0.08),
+    0 1px 2px -1px rgb(16 33 51 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(16 33 51 / 0.1),
+    0 2px 6px -2px rgb(16 33 51 / 0.06);
+  --shadow-lg: 0 12px 30px -6px rgb(16 33 51 / 0.12),
+    0 4px 8px -2px rgb(16 33 51 / 0.06);
+  --shadow-xl: 0 24px 60px -12px rgb(16 33 51 / 0.18),
+    0 6px 12px -4px rgb(16 33 51 / 0.08);
   --shadow-card: var(--shadow-md);
   --shadow-popover: var(--shadow-lg);
 
@@ -112,54 +112,54 @@
 }
 
 .dark {
-  --color-brand: oklch(70% 0.13 252);
-  --color-brand-foreground: oklch(15% 0.02 252);
-  --color-brand-soft: oklch(25% 0.08 252);
-  --color-brand-soft-foreground: oklch(85% 0.06 252);
-  --color-brand-strong: oklch(78% 0.14 252);
+  --color-brand: #005baa;
+  --color-brand-foreground: #ffffff;
+  --color-brand-soft: #103d67;
+  --color-brand-soft-foreground: #dcecf8;
+  --color-brand-strong: #3d84c2;
 
-  --color-surface: oklch(13% 0.012 250);
-  --color-surface-raised: oklch(17% 0.012 250);
-  --color-surface-sunken: oklch(10% 0.012 250);
-  --color-surface-overlay: oklch(17% 0.012 250 / 0.85);
+  --color-surface: #0f1720;
+  --color-surface-raised: #17212c;
+  --color-surface-sunken: #0b121a;
+  --color-surface-overlay: rgb(23 33 44 / 0.88);
 
-  --color-text: oklch(94% 0.005 250);
-  --color-text-muted: oklch(70% 0.01 250);
-  --color-text-subtle: oklch(58% 0.01 250);
+  --color-text: #edf4fb;
+  --color-text-muted: #b3c2d2;
+  --color-text-subtle: #8fa2b6;
 
-  --color-border: oklch(28% 0.012 250);
-  --color-border-strong: oklch(38% 0.012 250);
-  --color-ring: oklch(75% 0.15 65);
+  --color-border: #273547;
+  --color-border-strong: #3a4c63;
+  --color-ring: #3d84c2;
 
-  --color-accent: oklch(78% 0.14 65);
-  --color-accent-foreground: oklch(15% 0.02 65);
+  --color-accent: #c48b3b;
+  --color-accent-foreground: #1f1406;
 
-  --color-success: oklch(72% 0.15 150);
-  --color-success-foreground: oklch(95% 0.05 150);
-  --color-success-soft: oklch(25% 0.08 150);
-  --color-warning: oklch(80% 0.15 75);
-  --color-warning-foreground: oklch(15% 0.05 75);
-  --color-warning-soft: oklch(28% 0.08 75);
-  --color-danger: oklch(70% 0.18 25);
-  --color-danger-foreground: oklch(95% 0.05 25);
-  --color-danger-soft: oklch(28% 0.08 25);
-  --color-info: oklch(75% 0.13 240);
-  --color-info-foreground: oklch(15% 0.05 240);
-  --color-info-soft: oklch(25% 0.08 240);
+  --color-success: #56b27d;
+  --color-success-foreground: #08130d;
+  --color-success-soft: #123824;
+  --color-warning: #d8a24f;
+  --color-warning-foreground: #1f1406;
+  --color-warning-soft: #3d2b10;
+  --color-danger: #ef5267;
+  --color-danger-foreground: #160307;
+  --color-danger-soft: #3a1118;
+  --color-info: #62a5e2;
+  --color-info-foreground: #071521;
+  --color-info-soft: #10263b;
 
-  --shadow-xs: 0 1px 2px 0 oklch(0% 0 0 / 0.3);
-  --shadow-sm: 0 1px 3px 0 oklch(0% 0 0 / 0.4),
-    0 1px 2px -1px oklch(0% 0 0 / 0.2);
-  --shadow-md: 0 4px 12px -2px oklch(0% 0 0 / 0.4),
-    0 2px 6px -2px oklch(0% 0 0 / 0.25);
-  --shadow-lg: 0 12px 30px -6px oklch(0% 0 0 / 0.5),
-    0 4px 8px -2px oklch(0% 0 0 / 0.3);
-  --shadow-xl: 0 24px 60px -12px oklch(0% 0 0 / 0.6),
-    0 6px 12px -4px oklch(0% 0 0 / 0.4);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4),
+    0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.4),
+    0 2px 6px -2px rgb(0 0 0 / 0.25);
+  --shadow-lg: 0 12px 30px -6px rgb(0 0 0 / 0.5),
+    0 4px 8px -2px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 24px 60px -12px rgb(0 0 0 / 0.6),
+    0 6px 12px -4px rgb(0 0 0 / 0.4);
 }
 
 /* ================================================================
-   Tailwind theme bridge — expose tokens as utilities
+   Tailwind theme bridge - expose tokens as utilities
    ================================================================ */
 
 @theme inline {
@@ -259,11 +259,9 @@ textarea {
 }
 
 /* ================================================================
-   Backwards-compat aliases — interim bridge.
+   Backwards-compat aliases - interim bridge.
    Existing pages still reference --color-primary, --color-text,
    --color-bg-light, --color-border, --color-focus-ring etc.
-   until Phase 2/3 migrate them to the new token names.
-   Remove this block once all consumers are on the new tokens.
    ================================================================ */
 :root,
 .dark {
@@ -272,8 +270,6 @@ textarea {
   --color-primary-light: var(--color-brand);
   --color-white: var(--color-surface-raised);
   --color-bg-light: var(--color-surface-sunken);
-  --color-text-muted: var(--color-text-muted);
-  --color-text: var(--color-text);
   --color-footer-bg: var(--color-brand-strong);
   --color-footer-text: var(--color-brand-foreground);
   --color-hover: var(--color-brand);

@@ -11,6 +11,7 @@ import {
 } from "@/components/admin-form";
 import { updateFaculty } from "@/lib/admin-actions";
 import { getFacultyById } from "@/lib/admin-queries";
+import { displayFacultyName } from "@/lib/faculty-display";
 
 function formatDate(value: Date | null) {
   return value ? value.toISOString().slice(0, 10) : "";
@@ -34,7 +35,7 @@ export default async function FacultyDetailPage({
     <div className="space-y-8">
       <PageHeader
         eyebrow="Faculty detail"
-        title={faculty.name}
+        title={displayFacultyName(faculty.name)}
         description={`Code ${faculty.code} | ${faculty._count.ascCoaches} coaches | ${faculty._count.programmes} programmes`}
       />
 
